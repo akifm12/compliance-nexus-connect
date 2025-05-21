@@ -1,21 +1,27 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Shield, Users, FileText, AlertTriangle, BookOpen, Globe, ArrowRight } from "lucide-react";
+import { Check, Shield, Users, ArrowRight } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
 import RegistrationForm from "@/components/RegistrationForm";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { session, signOut } = useAuth();
 
   const handleSuccessfulRegistration = () => {
     setIsDialogOpen(false);
     toast.success("Registration successful! We'll be in touch shortly.");
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("You have been signed out.");
   };
 
   return (
@@ -32,21 +38,31 @@ const Index = () => {
             <Link to="/#services" className="text-sm font-medium hover:text-primary">Services</Link>
             <Link to="/#about" className="text-sm font-medium hover:text-primary">About</Link>
             <Link to="/contact" className="text-sm font-medium hover:text-primary">Contact</Link>
-            <Link to="/dashboard" className="text-sm font-medium hover:text-primary">Dashboard</Link>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>Register</Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>Register for Services</DialogTitle>
-                  <DialogDescription>
-                    Register for a SaaS demo, updates, newsletter, or submit your query.
-                  </DialogDescription>
-                </DialogHeader>
-                <RegistrationForm onSuccess={handleSuccessfulRegistration} />
-              </DialogContent>
-            </Dialog>
+            
+            {session ? (
+              <>
+                <Link to="/dashboard" className="text-sm font-medium hover:text-primary">Dashboard</Link>
+                <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
+              </>
+            ) : (
+              <>
+                <Link to="/auth" className="text-sm font-medium hover:text-primary">Login</Link>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button>Register</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                      <DialogTitle>Register for Services</DialogTitle>
+                      <DialogDescription>
+                        Register for a SaaS demo, updates, newsletter, or submit your query.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <RegistrationForm onSuccess={handleSuccessfulRegistration} />
+                  </DialogContent>
+                </Dialog>
+              </>
+            )}
           </nav>
           <Button size="icon" variant="outline" className="md:hidden">
             <span className="sr-only">Toggle menu</span>

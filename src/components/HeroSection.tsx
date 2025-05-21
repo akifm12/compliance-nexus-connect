@@ -3,15 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Shield } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import RegistrationForm from "./RegistrationForm";
 import { toast } from "@/components/ui/sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 const HeroSection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { session, signOut } = useAuth();
 
   const handleSuccessfulRegistration = () => {
     setIsDialogOpen(false);
     toast.success("Registration successful! We'll be in touch shortly.");
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("You have been signed out.");
   };
 
   return (
@@ -31,23 +39,38 @@ const HeroSection = () => {
               employee training, policy making, risk assessment, and GoAML.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button size="lg">Get Started</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle>Register for Services</DialogTitle>
-                    <DialogDescription>
-                      Register for a SaaS demo, updates, newsletter, or submit your query.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <RegistrationForm onSuccess={handleSuccessfulRegistration} />
-                </DialogContent>
-              </Dialog>
-              <Button size="lg" variant="outline">
-                Learn More
-              </Button>
+              {session ? (
+                <>
+                  <Link to="/dashboard">
+                    <Button size="lg">Go to Dashboard</Button>
+                  </Link>
+                  <Button size="lg" variant="outline" onClick={handleSignOut}>
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button size="lg">Get Started</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[500px]">
+                      <DialogHeader>
+                        <DialogTitle>Register for Services</DialogTitle>
+                        <DialogDescription>
+                          Register for a SaaS demo, updates, newsletter, or submit your query.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <RegistrationForm onSuccess={handleSuccessfulRegistration} />
+                    </DialogContent>
+                  </Dialog>
+                  <Link to="/auth">
+                    <Button size="lg" variant="outline">
+                      Login / Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           

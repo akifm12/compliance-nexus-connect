@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/sonner";
 
 interface RegistrationFormProps {
   onSuccess: () => void;
@@ -51,9 +53,33 @@ const RegistrationForm = ({ onSuccess, isNewsletterOnly = false }: RegistrationF
     setIsSubmitting(true);
     
     try {
-      // Simulate API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Form submitted:", data);
+      // Save data to Supabase based on form type
+      if (isNewsletterOnly) {
+        const { error } = await supabase
+          .from('newsletter_subscriptions')
+          .insert({
+            name: `${data.firstName} ${data.lastName}`,
+            email: data.email
+          });
+          
+        if (error) throw error;
+        
+        toast.success("Subscribed to newsletter successfully!");
+      } else {
+        const { error } = await supabase
+          .from('demo_requests')
+          .insert({
+            name: `${data.firstName} ${data.lastName}`,
+            email: data.email,
+            company_name: data.company || '',
+            service_interest: data.interest,
+            message: data.message || ''
+          });
+          
+        if (error) throw error;
+        
+        toast.success("Registration successful! We'll be in touch shortly.");
+      }
       
       // Call the onSuccess callback
       onSuccess();
@@ -62,6 +88,7 @@ const RegistrationForm = ({ onSuccess, isNewsletterOnly = false }: RegistrationF
       form.reset();
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("There was an error submitting your information. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
