@@ -31,6 +31,8 @@ const Index = () => {
             <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
             <Link to="/#services" className="text-sm font-medium hover:text-primary">Services</Link>
             <Link to="/#about" className="text-sm font-medium hover:text-primary">About</Link>
+            <Link to="/contact" className="text-sm font-medium hover:text-primary">Contact</Link>
+            <Link to="/dashboard" className="text-sm font-medium hover:text-primary">Dashboard</Link>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button>Register</Button>
