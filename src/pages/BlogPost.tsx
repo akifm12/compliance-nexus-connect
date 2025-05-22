@@ -46,10 +46,16 @@ const BlogPost = () => {
         
         // Ensure we have valid data before setting the state
         if (data) {
+          // Make sure profiles is a valid object with the expected structure or null
+          const authorData = data.profiles && 
+            typeof data.profiles === 'object' && 
+            !('error' in data.profiles) ? 
+            data.profiles : null;
+          
           // Format the data structure
           setPost({
             ...data,
-            author: data.profiles || null, // Handle possible null case
+            author: authorData,
           });
         }
       } catch (error) {
@@ -137,17 +143,17 @@ const BlogPost = () => {
             Back to all posts
           </Link>
           
-          <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+          <h1 className="text-4xl font-bold mb-4">{post?.title}</h1>
           
           <div className="flex flex-wrap items-center text-gray-500 mb-8 gap-4">
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-2" />
-              {formatDate(post.created_at)}
+              {post && formatDate(post.created_at)}
             </div>
             <div>By {getAuthorName()}</div>
           </div>
           
-          {isAdmin && (
+          {isAdmin && post && (
             <div className="mb-8">
               <Link to={`/admin/blog/edit/${post.id}`}>
                 <Button variant="outline">Edit Post</Button>
@@ -156,7 +162,7 @@ const BlogPost = () => {
           )}
           
           <div className="prose prose-lg max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: post.content }}></div>
+            <div dangerouslySetInnerHTML={{ __html: post?.content || '' }}></div>
           </div>
         </div>
       </div>
