@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,11 +46,9 @@ const BlogPost = () => {
         // Ensure we have valid data before setting the state
         if (data) {
           // Make sure profiles is a valid object with the expected structure or null
-          // Add a null check for data.profiles before accessing its properties
-          const authorData = data.profiles && 
-            typeof data.profiles === 'object' && 
-            !('error' in data.profiles) ? 
-            data.profiles : null;
+          const authorData = data.profiles ? 
+            (typeof data.profiles === 'object' && !('error' in data.profiles) ? 
+              data.profiles : null) : null;
           
           // Format the data structure
           setPost({
