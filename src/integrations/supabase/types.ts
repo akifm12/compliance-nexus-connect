@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_published: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       demo_requests: {
         Row: {
           company_name: string
@@ -69,6 +105,7 @@ export type Database = {
           created_at: string
           first_name: string | null
           id: string
+          is_admin: boolean
           job_title: string | null
           last_name: string | null
           updated_at: string
@@ -78,6 +115,7 @@ export type Database = {
           created_at?: string
           first_name?: string | null
           id: string
+          is_admin?: boolean
           job_title?: string | null
           last_name?: string | null
           updated_at?: string
@@ -87,6 +125,7 @@ export type Database = {
           created_at?: string
           first_name?: string | null
           id?: string
+          is_admin?: boolean
           job_title?: string | null
           last_name?: string | null
           updated_at?: string

@@ -7,6 +7,7 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   isLoading: boolean;
+  isAdmin: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -14,6 +15,7 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
   isLoading: true,
+  isAdmin: false,
   signOut: async () => {},
 });
 
@@ -21,6 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -28,7 +31,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        setIsLoading(false);
+        
+        // Check admin status whenever auth changes
+        if (session?.user) {
+          checkAdminStatus(session.user.id);
+        } else {
+          setIsAdmin(false);
+          setIsLoading(false);
+        }
       }
     );
 
@@ -36,11 +46,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setIsLoading(false);
+      
+      if (session?.user) {
+        checkAdminStatus(session.user.id);
+      } else {
+        setIsLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const checkAdminStatus = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', userId)
+        .single();
+      
+      if (error) throw error;
+      setIsAdmin(data?.is_admin || false);
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setIsAdmin(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const signOut = async () => {
     try {
@@ -51,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, isLoading, signOut }}>
+    <AuthContext.Provider value={{ session, user, isLoading, isAdmin, signOut }}>
       {children}
     </AuthContext.Provider>
   );
