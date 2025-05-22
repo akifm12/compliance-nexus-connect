@@ -47,6 +47,7 @@ const BlogPost = () => {
         // Ensure we have valid data before setting the state
         if (data) {
           // Make sure profiles is a valid object with the expected structure or null
+          // Add a null check for data.profiles before accessing its properties
           const authorData = data.profiles && 
             typeof data.profiles === 'object' && 
             !('error' in data.profiles) ? 
