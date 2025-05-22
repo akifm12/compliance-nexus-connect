@@ -46,12 +46,13 @@ const BlogPost = () => {
         
         // Ensure we have valid data before setting the state
         if (data) {
-          // Handle the potential null case for data.profiles explicitly
-          const authorData = data.profiles !== null
-            ? (typeof data.profiles === 'object' && !('error' in data.profiles) 
-                ? data.profiles 
-                : null) 
-            : null;
+          // More explicit type checking for profiles
+          let authorData = null;
+          if (data.profiles && 
+              typeof data.profiles === 'object' && 
+              !('error' in data.profiles)) {
+            authorData = data.profiles;
+          }
           
           // Format the data structure
           setPost({
