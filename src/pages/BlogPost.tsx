@@ -44,11 +44,14 @@ const BlogPost = () => {
 
         if (error) throw error;
         
-        // Format the data structure
-        setPost({
-          ...data,
-          author: data.profiles,
-        });
+        // Ensure we have valid data before setting the state
+        if (data) {
+          // Format the data structure
+          setPost({
+            ...data,
+            author: data.profiles || null, // Handle possible null case
+          });
+        }
       } catch (error) {
         console.error("Error fetching blog post:", error);
         // Redirect to blog page if post not found
@@ -153,7 +156,6 @@ const BlogPost = () => {
           )}
           
           <div className="prose prose-lg max-w-none">
-            {/* Render content as markdown or with HTML rendering based on your needs */}
             <div dangerouslySetInnerHTML={{ __html: post.content }}></div>
           </div>
         </div>
