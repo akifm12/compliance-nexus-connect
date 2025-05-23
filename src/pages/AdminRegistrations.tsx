@@ -99,8 +99,10 @@ const AdminRegistrations = () => {
 
   const handleSendEmailSummary = async () => {
     setIsSendingEmail(true);
+    
+    // Fixed: Properly type and handle the promise returned by toast.promise
     toast.promise(
-      new Promise((resolve, reject) => {
+      new Promise<string>((resolve, reject) => {
         setTimeout(() => {
           // This would be an actual API call in production
           // In a real app, you'd create an edge function to send emails
@@ -117,7 +119,12 @@ const AdminRegistrations = () => {
         success: 'Summary email sent!',
         error: 'Failed to send summary email.',
       }
-    ).finally(() => setIsSendingEmail(false));
+    );
+    
+    // Handle the isSendingEmail state separately
+    setTimeout(() => {
+      setIsSendingEmail(false);
+    }, 2000);
   };
 
   // If still loading auth state, show nothing
