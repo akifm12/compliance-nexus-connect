@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Shield } from "lucide-react";
+import { Building } from "lucide-react"; // Changed from Shield to Building
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import RegistrationForm from "@/components/RegistrationForm";
@@ -30,8 +30,8 @@ const Navbar = ({ scrollToSection }: NavbarProps) => {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
-          <Shield className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold">Nexus Compliance</span>
+          <Building className="h-6 w-6 text-primary" />
+          <span className="text-xl font-bold">ComplianceHub</span> {/* Company name changed */}
         </div>
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
@@ -47,6 +47,9 @@ const Navbar = ({ scrollToSection }: NavbarProps) => {
           {session ? (
             <>
               <Link to="/dashboard" className="text-sm font-medium hover:text-primary">Dashboard</Link>
+              {session.user?.email === "admin@compliancehub.com" && (
+                <Link to="/admin/registrations" className="text-sm font-medium hover:text-primary">Registrations</Link>
+              )}
               <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
             </>
           ) : (

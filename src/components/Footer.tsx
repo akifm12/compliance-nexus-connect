@@ -1,5 +1,5 @@
 
-import { Shield } from "lucide-react";
+import { Building } from "lucide-react"; // Changed from Shield to Building
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import RegistrationForm from "@/components/RegistrationForm";
@@ -20,8 +20,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Shield className="h-5 w-5 text-primary" />
-              <span className="font-bold">Nexus Compliance</span>
+              <Building className="h-5 w-5 text-primary" />
+              <span className="font-bold">ComplianceHub</span> {/* Company name changed */}
             </div>
             <p className="text-sm text-muted-foreground">
               Your trusted partner for comprehensive compliance and regulatory solutions.
@@ -71,7 +71,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t mt-8 pt-6 text-sm text-muted-foreground flex flex-col md:flex-row justify-between items-center">
-          <div>&copy; 2025 Nexus Compliance. All rights reserved.</div>
+          <div>&copy; 2025 ComplianceHub. All rights reserved.</div> {/* Company name changed */}
           <div className="flex gap-6 mt-4 md:mt-0">
             <a href="#" className="hover:text-primary">Privacy Policy</a>
             <a href="#" className="hover:text-primary">Terms of Service</a>
