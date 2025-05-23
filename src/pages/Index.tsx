@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,16 @@ const Index = () => {
     toast.success("You have been signed out.");
   };
 
+  // Function to handle smooth scrolling to sections
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navigation */}
@@ -35,7 +46,12 @@ const Index = () => {
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
-            <Link to="/#services" className="text-sm font-medium hover:text-primary">Services</Link>
+            <button 
+              onClick={() => scrollToSection('services-section')}
+              className="text-sm font-medium hover:text-primary"
+            >
+              Services
+            </button>
             <Link to="/#about" className="text-sm font-medium hover:text-primary">About</Link>
             <Link to="/contact" className="text-sm font-medium hover:text-primary">Contact</Link>
             
@@ -80,7 +96,7 @@ const Index = () => {
         <HeroSection />
 
         {/* Services Section with ID for navigation */}
-        <section id="services" className="py-16 bg-slate-50">
+        <section id="services-section" className="py-16 bg-slate-50">
           <ServicesSection />
         </section>
 
