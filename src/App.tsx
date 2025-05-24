@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 
 // Pages
@@ -12,7 +13,7 @@ import Dashboard from "@/pages/Dashboard";
 import AdminBlog from "@/pages/AdminBlog";
 import BlogEditor from "@/pages/BlogEditor";
 import NotFound from "@/pages/NotFound";
-import AdminRegistrations from "@/pages/AdminRegistrations"; // New import
+import AdminRegistrations from "@/pages/AdminRegistrations";
 
 // Providers
 import { AuthProvider } from "@/hooks/useAuth";
@@ -43,21 +44,25 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Toaster />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:slug" element={<BlogPost />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/admin/blog" element={<AdminBlog />} />
-        <Route path="/admin/blog/editor" element={<BlogEditor />} />
-        <Route path="/admin/blog/editor/:slug" element={<BlogEditor />} />
-        <Route path="/admin/registrations" element={<AdminRegistrations />} /> {/* New route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <HashRouter>
+          <Toaster />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin/blog" element={<AdminBlog />} />
+            <Route path="/admin/blog/editor" element={<BlogEditor />} />
+            <Route path="/admin/blog/editor/:slug" element={<BlogEditor />} />
+            <Route path="/admin/registrations" element={<AdminRegistrations />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </HashRouter>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
