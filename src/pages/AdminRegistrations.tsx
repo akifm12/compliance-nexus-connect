@@ -41,23 +41,56 @@ const AdminRegistrations = () => {
   const fetchData = async () => {
     setIsLoadingData(true);
     try {
-      // Fetch demo requests
+      console.log("Fetching demo requests...");
+      // Fetch demo requests (non-newsletter entries)
       const { data: demoData, error: demoError } = await supabase
         .from("demo_requests")
         .select("*")
+        .neq("service_interest", "Newsletter Subscription")
         .order("created_at", { ascending: false });
 
-      if (demoError) throw demoError;
+      if (demoError) {
+        console.error("Demo requests error:", demoError);
+        throw demoError;
+      }
+      console.log("Demo data:", demoData);
       setDemoRequests(demoData || []);
 
-      // Fetch newsletter subscriptions
+      console.log("Fetching newsletter subscriptions...");
+      // First try to fetch from newsletter_subscriptions table
       const { data: newsletterData, error: newsletterError } = await supabase
         .from("newsletter_subscriptions")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (newsletterError) throw newsletterError;
-      setNewsletterSubscriptions(newsletterData || []);
+      if (newsletterError) {
+        console.warn("Newsletter table error, trying demo_requests table:", newsletterError);
+        // If newsletter_subscriptions table doesn't exist or fails, 
+        // fetch newsletter entries from demo_requests table
+        const { data: newsletterFromDemo, error: newsletterFromDemoError } = await supabase
+          .from("demo_requests")
+          .select("*")
+          .eq("service_interest", "Newsletter Subscription")
+          .order("created_at", { ascending: false });
+
+        if (newsletterFromDemoError) {
+          console.error("Newsletter from demo error:", newsletterFromDemoError);
+          throw newsletterFromDemoError;
+        }
+        
+        // Transform demo_requests format to newsletter format
+        const transformedNewsletter = (newsletterFromDemo || []).map(item => ({
+          id: item.id,
+          name: item.name,
+          email: item.email,
+          created_at: item.created_at
+        }));
+        console.log("Newsletter from demo data:", transformedNewsletter);
+        setNewsletterSubscriptions(transformedNewsletter);
+      } else {
+        console.log("Newsletter data:", newsletterData);
+        setNewsletterSubscriptions(newsletterData || []);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to load registration data.");
@@ -100,12 +133,9 @@ const AdminRegistrations = () => {
   const handleSendEmailSummary = async () => {
     setIsSendingEmail(true);
     
-    // Fixed: Properly type and handle the promise returned by toast.promise
     toast.promise(
       new Promise<string>((resolve, reject) => {
         setTimeout(() => {
-          // This would be an actual API call in production
-          // In a real app, you'd create an edge function to send emails
           const success = true;
           if (success) {
             resolve("Email sent successfully");
@@ -121,7 +151,6 @@ const AdminRegistrations = () => {
       }
     );
     
-    // Handle the isSendingEmail state separately
     setTimeout(() => {
       setIsSendingEmail(false);
     }, 2000);
